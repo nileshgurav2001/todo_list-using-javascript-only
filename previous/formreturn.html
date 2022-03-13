@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body { border: 5px solid #df85fa;
+            margin: 5% 35%;
+            padding: 0px 0;
+            background-color: rgb(250, 156, 234);
+        }
+        .input1{
+            height: 40px;
+            width: 90%;
+            margin-left:15px;
+           margin-top: 10px;
+           border: 1px solid #808080;
+        }
+        label{
+            margin-left: 20px;
+            font-size: 20px;
+            
+        }
+        .login_form{
+            font-size: 20px;
+            text-align: center;
+        }
+        .click_btn{
+            height: 40px;
+            width: 92%;
+            margin-left: 15px;
+            font-size: 20px;
+            margin-bottom: 20px;
+            background-color: rgb(141, 141, 250);
+            border-radius: 5px;
+            border: 1px solid #808080;
+        }
+    </style>
+</head>
+<body>
+    <span class="login_form"><h2>Login Form</h2></span>
+    <hr style="margin-bottom: 8%;border: 1px solid rgb(245, 123, 107);">
+    <label for="name" >Name :</label>
+    <label for="" id="msg_name" style="font-size: small;color: blueviolet;"></label><br>
+    <input type="text" id="tname" class="input1"><br><br>
+    <label for="email">Email :</label>
+    <label for="" id="msg_mail" style="font-size: small;color: blueviolet;"></label><br>
+    <input type="email" id="tmail" class="input1"><br><br>
+    <label for="number">Number :</label>
+    <label for="" id="msg_number" style="font-size: small;color: blueviolet;"></label><br>
+    <input type="number" id="number" class="input1"><br><br>
+    <button onclick="findout()" class="click_btn">Login</button>
+
+    <div id="mydiv"></div>
+
+
+    <script>
+        let findout=()=>
+        {
+            let name=document.getElementById("tname").value;
+            name=name.trim();
+            let mail=document.getElementById("tmail").value;
+            let number=document.getElementById("number").value;
+
+            document.getElementById("msg_name").innerHTML="";
+            document.getElementById("msg_mail").innerHTML="";
+            document.getElementById("msg_number").innerHTML="";
+
+            if(name=="")
+            {
+                document.getElementById("msg_name").innerHTML="Enter your Name" ;
+                document.getElementById("tname").focus();
+                return ;
+            }
+            if(mail=="")
+            {
+                document.getElementById("msg_mail").innerHTML="Enter your Name" ;
+                document.getElementById("tmail").focus();
+                return ;
+            }
+            if(number=="")
+            {
+                document.getElementById("msg_number").innerHTML="Enter your Name" ;
+                document.getElementById("number").focus();
+                return ;
+            }
+
+            // document.getElementById("mydiv").innerHTML=name+("<br />")+mail+("<br />")+number;
+
+            if(checkvalue(mail)==false)
+            {
+                document.getElementById("msg_mail").innerHTML="Enter your Name" ;
+                document.getElementById("tmail").focus();
+                return ;
+            }
+
+            if(checknumber(number) == false)
+            {
+                document.getElementById("msg_number").innerHTML="Enter your Name" ;
+                document.getElementById("number").focus();
+                return ;
+            }
+
+            function checkvalue(mail)
+            {
+
+                var pattern= new RegExp(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/);
+                return pattern.test(mail);
+            }
+
+            function checknumber(number)
+            {
+                var pattern = new RegExp(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/);
+
+                return pattern.test(number);
+            }
+          
+
+        }
+    </script>
+    
+</body>
+</html>

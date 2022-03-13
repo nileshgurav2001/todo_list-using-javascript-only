@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+         <!-- icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    
+
+    <link rel="stylesheet" href="style.css">
+   
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <style>
+        .form_modify {
+            border: 1px solid #808080;
+            padding: 3% 5%;
+            margin: 3% 5%;
+            ;
+        }
+
+        table tr,
+        th,
+        td {
+            border: 1px solid #808080;
+            text-align: center;
+            width: 12%;
+
+        }
+
+
+
+        table {
+            caption-side: bottom;
+            border-collapse: collapse;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+
+        <div class="form_modify">
+            <div class="mb-3">
+                <input type="hidden" id="id" value="0">
+                <label class="form-label">Book Name</label>
+                <input type="task" class="form-control" id="tname">
+
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Author</label>
+                <input type="task" class="form-control" id="tauthor">
+
+            </div>
+            <div class="mb-3">
+                <label class="form-label">ISBN</label>
+                <input type="number" class="form-control" id="number">
+            </div>
+
+            <button type="submit" class="btn btn-primary" onclick="set()">Submit</button>
+
+        </div>
+
+    </section>
+
+
+    <section class="container">
+        <table class="table1" id="table">
+            <tr>
+                <th>sr.no</th>
+                <th>ISBN#</th>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>action </th>
+            </tr>
+        </table>
+    </section>
+
+
+    <script>
+        let set = () => {
+            let id = document.getElementById("id").value;
+            let tname = document.getElementById("tname").value;
+            let tauthor = document.getElementById("tauthor").value;
+            let tnum = document.getElementById("number").value;
+
+            if (tname == "") {
+                document.getElementById("tname").focus();
+                return false;
+            }
+            if (tauthor == "") {
+                document.getElementById("tauthor").focus();
+                return false;
+            }
+            if (tnum == "") {
+                document.getElementById("number").focus();
+                return false;
+            }
+            
+            // document.write('😍❤🤣🤦‍♂️🤦‍♀️🙌🙌');
+
+           
+            let tasks = new Array;
+            let tid = Number(document.getElementById("id").value);
+
+            if (localStorage.getItem("tasks") != null) {
+                   tasks = JSON.parse(localStorage.getItem("tasks"));
+                 
+            }
+
+           
+            if(tid==0)
+            {
+                for(i=0;i<tasks.length;i++)
+                {
+                    if(tid<tasks[i].id)
+                    {
+                        tid=tasks[i].id;
+                    }
+                }
+
+                tid=tid+1;
+                console.log(tid);
+            }
+
+            let task = { id: tid, name: tname, author: tauthor, tnum: tnum, status:"open" };
+            tasks.push(task);
+
+            console.log(tasks);
+
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+
+            clearchart();
+            link();
+            
+
+        }
+
+
+        let clearchart = () =>
+        {
+            document.getElementById("id").value="0";
+            document.getElementById("tname").value="";
+            document.getElementById("tauthor").value=""; 
+            document.getElementById("number").value="";
+        }
+
+
+        let link = () => {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+
+
+
+
+            let table = document.getElementById("table");
+            let rowcount = table.rows.length;
+
+
+            for (i = 1; i < rowcount; i++) {
+                table.deleteRow(1);
+            }
+
+            for (i = 0; i < tasks.length; i++) {
+                let row = table.insertRow(table.rows.length);
+                let cell0 = row.insertCell(0);
+                let cell1 = row.insertCell(1);
+                let cell2 = row.insertCell(2);
+                let cell3 = row.insertCell(3);
+                let cell4 = row.insertCell(4);
+                let cell5 = row.insertCell(5);
+                cell0.innerHTML = "1";
+
+                cell0.innerHTML = i + 1;
+                cell1.innerHTML = tasks[i].tnum;
+                cell2.innerHTML = tasks[i].name;
+                cell3.innerHTML = tasks[i].author;
+                cell4.innerHTML = tasks[i].status;
+               
+                
+                let action="";
+                    if(tasks[i].status=="open")
+                    {
+                        
+                    //  action +="<button class='btn btn-primary' onclick='edit("+ tasks[i].id+")'><i class='fa fa-edit'></i></button>";
+                    action +="<button class='btn btn-danger' onclick='deletetask("+ tasks[i].id+")'><i class='fa fa-trash'></i></button>";
+
+                    }
+
+                    
+                    cell5.innerHTML = action;
+
+            }
+
+        }
+
+      
+
+        let deletetask = (id) =>
+        {
+            
+            if(confirm("sure to delete ?")){
+            let tasks=JSON.parse(localStorage.getItem("tasks"));
+            let newtasks=new Array();
+
+            for(let i=0;i<tasks.length;i++)
+            {
+                if(tasks[i].id != id)
+                {
+                    newtasks.push(tasks[i]);
+                }
+            }
+
+            localStorage.setItem("tasks", JSON.stringify(newtasks));
+            link();
+        }
+        }
+
+
+    </script>
+</body>
+
+</html>

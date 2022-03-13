@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="d-flex mt-2 ">
+                    <input type="hidden" id="id" value="0">
+                    <label for="" class="me-2">Date:</label>
+                    <input id="tdate" type="date" style="width: 200px; border-radius: 25px;" class="form-control me-2"
+                        aria-label="Search" />
+                    <label for="" class="me-2">Time:</label>
+                    <input id="ttime" type="time" style="width: 200px; border-radius: 25px;" class="form-control me-2"
+                        aria-label="Search" />
+                    <label for="" class="me-2">Task:</label>
+                    <input id="ttask" style="width: 200px; border-radius: 25px;" class="form-control me-2" type="search"
+                        placeholder="Task" aria-label="Search" />
+                    <button class="btn btn-outline-success me-2" onclick="save()">Save</button>
+                    <button class="btn btn-outline-danger" onclick="cleartask()">Cancel</button>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <br />
+            </div>
+            <div class="col-lg-12">
+                <table style="border: 1px solid black;" class="table table-stripped" id="table">
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Task</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let save = () => {
+            let id = document.getElementById("id").value;
+            let tdate = document.getElementById("tdate").value;
+            let ttime = document.getElementById("ttime").value;
+            let ttask = document.getElementById("ttask").value;
+
+            if (tdate == "") {
+                document.getElementById("tdate").focus();
+                return false;
+            }
+            if (ttime == "") {
+                document.getElementById("ttime").focus();
+                return false;
+            }
+            if (ttask == "") {
+                document.getElementById("ttask").focus();
+                return false;
+            }
+
+            let tasks = new Array();
+            if (localStorage.getItem("tasks") != null) {
+                tasks = JSON.parse(localStorage.getItem("tasks"));
+            }
+            let tid = Number(document.getElementById("id").value);
+
+            if (tid == 0) {
+                for (let i = 0; i < tasks.length; i++) {
+                    if (tid < tasks[i].id) {
+                        tid = tasks[i].id;
+                    }
+                }
+                tid = tid + 1;
+                let task = { id: tid, date: tdate, time: ttime, task: ttask, status: "open" };
+                tasks.push(task);
+            }
+            else {
+                for (let i = 0; i < tasks.length; i++) {
+                    if (tasks[i].id == tid) {
+                        tasks[i].date = tdate;
+                        tasks[i].time = ttime;
+                        tasks[i].task = ttask;
+                        tasks[i].status = "open";
+                    }
+                }
+            }
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            cleartask();
+            list();
+        }
+
+        let cleartask = () => {
+            document.getElementById("id").value = "0";
+            document.getElementById("tdate").value = "";
+            document.getElementById("ttime").value = "";
+            document.getElementById("ttask").value = "";
+        }
+
+        let list = () => {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+            if (tasks != null) {
+
+                let table = document.getElementById("table");
+                let rowcount = table.rows.length;
+
+                for (i = 1; i < rowcount; i++) {
+                    table.deleteRow(1);
+                }
+                for (i = 0; i < tasks.length; i++) {
+                    let row = table.insertRow(table.rows.length);
+                    let cell0 = row.insertCell(0);
+                    let cell1 = row.insertCell(1);
+                    let cell2 = row.insertCell(2);
+                    let cell3 = row.insertCell(3);
+                    let cell4 = row.insertCell(4);
+                    let cell5 = row.insertCell(5);
+
+                    cell0.innerHTML = i + 1;
+                    cell1.innerHTML = tasks[i].date;
+                    cell2.innerHTML = tasks[i].time;
+                    cell3.innerHTML = tasks[i].task;
+                    cell4.innerHTML = tasks[i].status;
+                    let action = "";
+                    if (tasks[i].status == "open") {
+                        action += "<button class='btn btn-primary' onclick='edit(" + tasks[i].id + ")'> <i class='fa fa-edit'></i></button> ";
+                        action += "<button class='btn btn-danger' onclick='deletetask(" + tasks[i].id + ")'> <i class='fa fa-trash'></i></button> ";
+                    }
+                    if (tasks[i].status == "open") {
+                        action += "<button class='btn btn-success' onclick='changestatus(" + tasks[i].id + ", \"close\")'> <i class='fa fa-close'></i></button>";
+                    } else {
+                        action += "<button class='btn btn-warning' onclick='changestatus(" + tasks[i].id + ", \"open\")'> <i class='fa fa-check'></i></button>";
+                    }
+                    cell5.innerHTML = action;
+
+
+                }
+            }
+        }
+
+        let edit = (id) => {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+            for (let i = 0; i < tasks.length; i++) {
+                if (tasks[i].id == id) {
+                    document.getElementById("id").value = tasks[i].id;
+                    document.getElementById("tdate").value = tasks[i].date;
+                    document.getElementById("ttime").value = tasks[i].time;
+                    document.getElementById("ttask").value = tasks[i].task;
+
+                }
+            }
+
+
+        }
+
+        let deletetask = (id) => {
+            if (confirm("Sure to delete")) {
+                let tasks = JSON.parse(localStorage.getItem("tasks"));
+                let newtasks = new Array();
+                for (let i = 0; i < tasks.length; i++) {
+                    if (tasks[i].id != id) {
+                        newtasks.push(tasks[i]);
+                    }
+                }
+                localStorage.setItem("tasks", JSON.stringify(newtasks));
+                list();
+            }
+        }
+
+        let changestatus = (id, status) => {
+            if (confirm("Sure to change status?")) {
+                let tasks = JSON.parse(localStorage.getItem("tasks"));
+                for (let i = 0; i < tasks.length; i++) {
+                    if (tasks[i].id == id) {
+                        tasks[i].status = status;
+                    }
+                }
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+                list();
+            }
+        }
+
+        list();
+
+    </script>
+</body>
+
+</html>
